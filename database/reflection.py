@@ -100,3 +100,17 @@ def get_primary_key(table_name):
             return column.name
 
     return None
+
+def get_schema_text(table_name):
+ 
+    table = get_table_object(table_name)
+ 
+    schema_lines = []
+ 
+    for column in table.columns:
+ 
+        schema_lines.append(
+            f"{column.name} {column.type}"
+        )
+ 
+    return "\n".join(schema_lines)

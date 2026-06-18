@@ -15,6 +15,7 @@ from views.insert_page import render_insert_page
 from views.update_page import render_update_page
 from views.delete_page import render_delete_page
 from views.logs_page import render_logs_page
+from views.ai_chat_page import render_ai_chat_page
 
 
 st.set_page_config(
@@ -133,7 +134,8 @@ def main():
         "Data Viewer",
         "Insert",
         "Update",
-        "Delete"
+        "Delete",
+        "AI ChatBot"
     ]
 
     if is_admin():
@@ -197,6 +199,9 @@ def main():
     elif menu == "Logs":
 
         render_logs_page()
+    
+    elif menu == "AI ChatBot":
+        render_ai_chat_page()
 
 
 if __name__ == "__main__":

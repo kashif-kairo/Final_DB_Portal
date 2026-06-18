@@ -1,4 +1,6 @@
 import streamlit as st
+from sqlalchemy import (Integer, Float, Boolean, Date, DateTime)
+from sqlalchemy.dialects.mysql import TINYINT
 
 from auth.session import (
     is_admin
@@ -71,17 +73,28 @@ def render_insert_page():
     )
 
     for column in table.columns:
+        # st.write(column.name,type(column.type),column.type)
 
         if column.primary_key:
             continue
 
-        value = st.text_input(
-            column.name
-        )
+        column_type = column.type 
+        if (column.name.lower() == "is_active" or isinstance(column_type,TINYINT) or isinstance(column_type,Boolean)):
+            form_data[column.name]=st.checkbox(column.name)
 
-        form_data[
-            column.name
-        ] = value
+        elif isinstance(column_type,Float):
+            form_data[column.name]=st.number_input(column.name, step =0.01)
+
+        elif isinstance(column_type,Date):
+            form_data[column.name]=st.date_input(column.name)
+
+        elif isinstance(column_type, DateTime):
+            form_data[column.name]=st.date_input(column.name)
+        else:
+            if 'email' in column.name.lower():
+                form_data[column.name]=st.text_input(column.name,placeholder="user@example.com")
+            else:
+                form_data[column.name]=st.text_input(column.name)
 
     if st.button(
         "Insert Record"

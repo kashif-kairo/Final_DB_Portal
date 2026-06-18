@@ -1,4 +1,7 @@
 import streamlit as st
+from sqlalchemy import (Integer, Float, Boolean, Date, DateTime)
+from sqlalchemy.dialects.mysql import TINYINT
+
 
 from auth.session import (
     is_admin
@@ -104,17 +107,35 @@ def render_update_page():
         if column.primary_key:
             continue
 
-        updated_data[
-            column.name
-        ] = st.text_input(
-            column.name,
-            value=str(
-                record.get(
-                    column.name,
-                    ""
-                )
-            )
-        )
+        column_type = column.type 
+        if (column.name.lower() == "is_active" or isinstance(column_type,TINYINT) or isinstance(column_type,Boolean)):
+            updated_data[column.name]=st.checkbox(column.name,value=bool(record.get(column.name,0)))
+
+        elif isinstance(column_type,Float):
+            updated_data[column.name]=st.number_input(column.name, value=float(record.get(column.name,0)) ,step =0.01)
+
+        elif isinstance(column_type,Date):
+            updated_data[column.name]=st.date_input(column.name,value=record.get(column.name))
+
+        elif isinstance(column_type, DateTime):
+            updated_data[column.name]=st.date_input(column.name)
+        else:
+            if 'email' in column.name.lower():
+                updated_data[column.name]=st.text_input(column.name,placeholder="user@example.com",value=str(record.get(column.name,"")))
+            else:
+                updated_data[column.name]=st.text_input(column.name,value=str(record.get(column.name,"")))
+
+        # updated_data[
+        #     column.name
+        # ] = st.text_input(
+        #     column.name,
+        #     value=str(
+        #         record.get(
+        #             column.name,
+        #             ""
+        #         )
+        #     )
+        # )
 
     if st.button(
         "Update Record"

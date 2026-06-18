@@ -30,6 +30,10 @@ def insert_record(
 
     try:
 
+        for key , value in data.items():
+            if isinstance(value,bool):
+                data[key]=1 if value else 0
+
         with Session(engine) as session:
 
             stmt = (
